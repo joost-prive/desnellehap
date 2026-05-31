@@ -152,6 +152,14 @@
                     <p class="text-xs sm:text-sm text-cream/80 mt-8 max-w-md mx-auto italic leading-relaxed">
                         Druk op de knop en zeg bijv. <span class="text-gold not-italic font-semibold">"4 friet met, 2 frikandellen, 1 kroket en een berenklauw"</span>
                     </p>
+
+                    <button id="showMenuBtn"
+                        class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-gold/70 text-gold hover:bg-gold/15 active:scale-95 transition-all text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 5h16M4 12h16M4 19h10"/>
+                        </svg>
+                        Bekijk de menukaart
+                    </button>
                 </div>
             </div>
 
@@ -350,6 +358,25 @@
                     <button onclick="closeVoiceModal()" class="px-3 py-2 text-sm rounded-lg bg-ink/10 hover:bg-ink/15 font-bold">Annuleren</button>
                     <button onclick="beginRecognition()" class="px-3 py-2 text-sm rounded-lg bg-brand text-cream font-bold hover:bg-brand-dark">Opnieuw</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Menu modal                                                    -->
+    <!-- ============================================================ -->
+    <div id="menuModal" class="hidden fixed inset-0 bg-ink/70 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="menuModalTitle">
+        <div class="bg-cream rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border-2 border-brand/20 flex flex-col max-h-[85vh]">
+            <div class="bg-brand text-cream px-4 py-3 flex justify-between items-center flex-shrink-0">
+                <h3 id="menuModalTitle" class="font-display text-base tracking-wide">DE MENUKAART</h3>
+                <button id="menuCloseBtn" class="text-cream/80 hover:text-cream text-2xl leading-none" aria-label="Sluiten">&times;</button>
+            </div>
+            <div class="p-5 overflow-y-auto">
+                <p class="text-[10px] tracking-[0.3em] uppercase font-bold text-brand-light text-center mb-3">Spreek of voeg toe</p>
+                <ul id="menuList" class="divide-y divide-dashed divide-brand/15"></ul>
+                <p class="text-[11px] text-ink/55 italic text-center mt-4 leading-relaxed">
+                    Tip: synoniemen zoals <span class="not-italic font-semibold text-brand">"patat"</span> of <span class="not-italic font-semibold text-brand">"frietje"</span> worden ook herkend.
+                </p>
             </div>
         </div>
     </div>
@@ -877,7 +904,48 @@
             showScreen('screen-home');
         });
 
+        // ============================================================
+        // Menu modal
+        // ============================================================
+        function populateMenuList() {
+            const list = document.getElementById('menuList');
+            list.innerHTML = '';
+            snacks
+                .map((name, idx) => ({ name, idx }))
+                .sort((a, b) => a.name.localeCompare(b.name, 'nl'))
+                .forEach(({ name, idx }) => {
+                    const li = document.createElement('li');
+                    li.className = 'flex justify-between items-baseline py-2.5 gap-3';
+
+                    const nameEl = document.createElement('span');
+                    nameEl.className = 'font-medium text-ink';
+                    nameEl.textContent = name;
+
+                    const priceEl = document.createElement('span');
+                    priceEl.className = 'font-display text-brand tabular-nums text-sm';
+                    priceEl.textContent = fmtEur(prices[idx]);
+
+                    li.appendChild(nameEl);
+                    li.appendChild(priceEl);
+                    list.appendChild(li);
+                });
+        }
+
+        function openMenuModal() {
+            document.getElementById('menuModal').classList.remove('hidden');
+        }
+        function closeMenuModal() {
+            document.getElementById('menuModal').classList.add('hidden');
+        }
+
+        document.getElementById('showMenuBtn').addEventListener('click', openMenuModal);
+        document.getElementById('menuCloseBtn').addEventListener('click', closeMenuModal);
+        document.getElementById('menuModal').addEventListener('click', (e) => {
+            if (e.target.id === 'menuModal') closeMenuModal();
+        });
+
         populateAddSelect();
+        populateMenuList();
     </script>
 </body>
 </html>
