@@ -3,6 +3,14 @@
 *.jpg
 *.jpeg
 
+# ...behalve de website-assets die de site nodig heeft
+!logo.png
+!favicon.png
+!favicon-64.png
+!Snackbar1.png
+!Snackbar2.png
+!Snackbar3.png
+
 # Lokale map met werkmateriaal
 ClashRoomsKoelkasten/
 

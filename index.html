@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Snackbar De Snelle Hap</title>
-    <meta name="description" content="Spreek je bestelling in bij Snackbar De Snelle Hap">
-    <meta name="theme-color" content="#d62828">
+    <title>Snackbar De Snelle Hap &mdash; bestel met je stem</title>
+    <meta name="description" content="Bestel je hap in een paar seconden bij Snackbar De Snelle Hap &mdash; gewoon met je stem.">
+    <meta name="theme-color" content="#7c3a1a">
+
+    <link rel="icon" type="image/png" sizes="128x128" href="favicon.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+    <link rel="apple-touch-icon" href="favicon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -17,56 +21,48 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        display: ['"Bowlby One"', 'system-ui', 'sans-serif'],
-                        sans: ['Fredoka', 'system-ui', 'sans-serif']
+                        display: ['Anton', 'Impact', 'system-ui', 'sans-serif'],
+                        serif: ['Fraunces', 'Georgia', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
                     },
                     colors: {
-                        snackred: {
-                            DEFAULT: '#d62828',
-                            dark: '#a31e1e',
-                            light: '#f4a3a3'
+                        brand: {
+                            DEFAULT: '#7c3a1a',     // diep bruin uit logo
+                            dark:    '#5a2a12',
+                            light:   '#a14d24'
                         },
-                        snackyellow: {
-                            DEFAULT: '#f9c80e',
-                            dark: '#d9aa00',
-                            light: '#fde68a'
-                        },
-                        snackcream: '#fff8e7'
+                        gold:  '#d4a04a',           // friet-goud
+                        cream: '#fdf6e3',           // papier crème
+                        ink:   '#1f1310',
+                        ketchup: { DEFAULT: '#c8252b', dark: '#9a1a1f' }
                     }
                 }
             }
         }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        html, body { background-color: #fdf6e3; }
         body {
-            font-family: 'Fredoka', system-ui, sans-serif;
-            background-color: #fff8e7;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: #1f1310;
+        }
+
+        .font-display { font-family: 'Anton', Impact, system-ui, sans-serif; letter-spacing: 0.02em; }
+        .font-serif   { font-family: 'Fraunces', Georgia, serif; }
+
+        /* Subtiele papier-textuur op crème vlakken */
+        .paper {
+            background-color: #fdf6e3;
             background-image:
                 repeating-linear-gradient(135deg,
-                    rgba(214, 40, 40, 0.025) 0,
-                    rgba(214, 40, 40, 0.025) 1px,
+                    rgba(124, 58, 26, 0.025) 0,
+                    rgba(124, 58, 26, 0.025) 1px,
                     transparent 1px,
-                    transparent 22px);
+                    transparent 24px);
         }
 
-        .font-display { font-family: 'Bowlby One', system-ui, sans-serif; letter-spacing: 0.5px; }
-
-        /* Awning: rood/wit verticale stripes onder de header */
-        .awning-stripes {
-            background-image: repeating-linear-gradient(90deg,
-                #d62828 0, #d62828 22px,
-                #fff8e7 22px, #fff8e7 44px);
-        }
-
-        /* Scalloped bottom edge via SVG (zigzag-awning) */
-        .scallop-bottom {
-            -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'><path d='M0 0 L0 8 L10 0 L20 8 L30 0 L40 8 L50 0 L60 8 L70 0 L80 8 L90 0 L100 8 L110 0 L120 8 L120 0 Z'/></svg>") bottom/120px 12px repeat-x;
-                    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'><path d='M0 0 L0 8 L10 0 L20 8 L30 0 L40 8 L50 0 L60 8 L70 0 L80 8 L90 0 L100 8 L110 0 L120 8 L120 0 Z'/></svg>") bottom/120px 12px repeat-x;
-        }
-
-        /* Ronde puls-ring achter mic */
+        /* Pulserende ring achter mic-knop */
         .pulse-ring {
             animation: pulse-ring 1.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) infinite;
         }
@@ -77,148 +73,178 @@
         }
 
         /* REC dot puls */
-        .rec-dot {
-            animation: rec-blink 1s ease-in-out infinite;
-        }
+        .rec-dot { animation: rec-blink 1s ease-in-out infinite; }
         @keyframes rec-blink {
             0%, 100% { opacity: 1; transform: scale(1); }
             50%      { opacity: 0.4; transform: scale(0.85); }
         }
 
         /* Visualizer-bars vloeiend laten meebewegen */
-        .vis-bar {
-            transition: height 60ms linear;
-        }
+        .vis-bar { transition: height 60ms linear; }
 
-        /* Receipt-tear top edge */
-        .receipt {
-            position: relative;
-        }
-        .receipt::before {
-            content: '';
-            position: absolute;
-            left: 0; right: 0; top: -10px;
-            height: 10px;
-            background:
-                radial-gradient(circle at 8px 10px, #fff 4px, transparent 4.5px) repeat-x;
-            background-size: 16px 10px;
-        }
-
-        /* Tekst-schaduw voor displayfont (vintage signage feel) */
-        .sign-shadow {
-            text-shadow:
-                2px 2px 0 #a31e1e,
-                3px 3px 0 rgba(0,0,0,0.15);
+        /* Lichte zoom-animatie op hero-foto */
+        .hero-img { animation: slow-zoom 18s ease-in-out infinite alternate; }
+        @keyframes slow-zoom {
+            0%   { transform: scale(1.0)  translateY(0); }
+            100% { transform: scale(1.06) translateY(-1%); }
         }
     </style>
 </head>
-<body class="min-h-screen text-gray-900 antialiased">
+<body class="min-h-screen antialiased paper">
 
-    <!-- ===== Header / Signbord ===== -->
-    <header class="relative">
-        <div class="bg-snackred text-snackcream shadow-xl">
-            <div class="max-w-2xl mx-auto px-4 pt-5 pb-6 text-center">
-                <div class="text-snackyellow text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold mb-1">
-                    &mdash; Sinds 1968 &mdash;
-                </div>
-                <h1 class="font-display text-3xl sm:text-5xl leading-none sign-shadow">
-                    <span class="text-snackyellow inline-block transform -rotate-6 mr-1">🍟</span>
-                    Snackbar
-                    <span class="block text-snackcream">De Snelle Hap</span>
-                </h1>
-                <p class="text-snackcream/90 text-xs sm:text-sm italic mt-2 font-medium">
-                    Vers gebakken &middot; Lekker snel
-                </p>
+    <!-- ===== Header met logo ===== -->
+    <header class="bg-cream/90 backdrop-blur border-b border-brand/10">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <a href="#" class="flex items-center gap-3" aria-label="Snackbar De Snelle Hap">
+                <img src="logo.png" alt="Snackbar De Snelle Hap"
+                     class="h-14 sm:h-16 w-auto">
+            </a>
+            <div class="hidden sm:flex items-center gap-2 text-brand/70 text-xs tracking-[0.25em] uppercase font-semibold">
+                <span>Eerlijk</span>
+                <span class="w-1 h-1 rounded-full bg-gold"></span>
+                <span>Lekker</span>
+                <span class="w-1 h-1 rounded-full bg-gold"></span>
+                <span>Snel</span>
             </div>
         </div>
-        <!-- Awning stripes -->
-        <div class="awning-stripes h-4 scallop-bottom"></div>
     </header>
 
-    <main class="max-w-2xl mx-auto px-4 py-8">
+    <main>
 
         <!-- ============================================================ -->
         <!-- Scherm: Home                                                  -->
         <!-- ============================================================ -->
-        <section id="screen-home" class="flex flex-col items-center text-center">
-            <div class="inline-block bg-snackyellow text-snackred-dark font-display text-sm sm:text-base px-4 py-1.5 rounded-full shadow-md mb-4 transform -rotate-1">
-                BESTEL MET JE STEM!
-            </div>
-            <p class="text-gray-800 text-base sm:text-lg mb-8 max-w-md font-medium">
-                Geen gedoe met menu's doorzoeken &mdash; druk op de knop en zeg gewoon wat je wilt.
-            </p>
+        <section id="screen-home">
 
-            <!-- Big mic button met gele "halo" achtergrond -->
-            <div class="relative">
-                <span class="absolute inset-0 bg-snackyellow rounded-full blur-2xl opacity-60 scale-110"></span>
-                <button id="recordBtn"
-                    class="relative w-60 h-60 sm:w-72 sm:h-72 rounded-full bg-snackred hover:bg-snackred-dark active:scale-95 text-white shadow-[0_15px_40px_-10px_rgba(214,40,40,0.6)] transition-all duration-150 flex flex-col items-center justify-center gap-3 border-[6px] border-snackyellow ring-4 ring-snackred-dark/30">
-                    <div class="relative">
-                        <i class="fa-solid fa-microphone text-7xl sm:text-8xl drop-shadow"></i>
-                        <i class="fa-solid fa-wifi absolute -top-2 -right-6 text-2xl text-snackyellow rotate-45 opacity-90"></i>
+            <!-- ===== Hero met foto van de bakker ===== -->
+            <div class="relative overflow-hidden">
+                <img src="Snackbar2.png" alt="In de keuken bij De Snelle Hap"
+                     class="hero-img absolute inset-0 w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/30 to-ink/80"></div>
+
+                <div class="relative max-w-3xl mx-auto px-4 pt-14 pb-12 sm:pt-20 sm:pb-16 text-center text-cream">
+                    <p class="text-gold font-semibold text-xs sm:text-sm tracking-[0.3em] uppercase mb-4">
+                        Eerlijk &middot; Lekker &middot; Snel
+                    </p>
+                    <h1 class="font-display text-4xl sm:text-6xl leading-none mb-4">
+                        BESTEL <span class="text-gold">MET JE STEM</span>
+                    </h1>
+                    <p class="text-base sm:text-xl text-cream/90 max-w-xl mx-auto mb-10 leading-relaxed">
+                        Geen menukaart doorzoeken, geen gedoe.<br class="hidden sm:inline">
+                        Druk op de knop en zeg gewoon wat je wilt.
+                    </p>
+
+                    <!-- Big mic button -->
+                    <div class="relative inline-block">
+                        <span class="absolute inset-0 bg-gold rounded-full blur-3xl opacity-40 scale-110"></span>
+                        <button id="recordBtn"
+                            class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full bg-ketchup hover:bg-ketchup-dark active:scale-95 text-cream shadow-[0_20px_50px_-10px_rgba(0,0,0,0.6)] transition-all duration-150 flex flex-col items-center justify-center gap-2 border-[6px] border-cream/95 ring-4 ring-ketchup-dark/50">
+                            <svg class="w-16 h-16 sm:w-20 sm:h-20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3Z"/>
+                                <path d="M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.93V20H8a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-2.07A7 7 0 0 0 19 11Z"/>
+                            </svg>
+                            <span class="font-display text-lg sm:text-xl leading-tight px-4">
+                                SPREEK HIER<br>JE BESTELLING IN
+                            </span>
+                        </button>
                     </div>
-                    <span class="font-display text-base sm:text-lg leading-tight px-6">
-                        SPREEK HIER JE<br>BESTELLING IN
-                    </span>
-                </button>
+
+                    <p class="text-xs sm:text-sm text-cream/80 mt-8 max-w-md mx-auto italic leading-relaxed">
+                        Druk op de knop en zeg bijv. <span class="text-gold not-italic font-semibold">"4 friet met, 2 frikandellen, 1 kroket en een berenklauw"</span>
+                    </p>
+                </div>
             </div>
 
-            <p class="text-xs sm:text-sm text-gray-600 mt-8 max-w-xs italic leading-relaxed">
-                Bijv. <span class="text-snackred-dark font-bold not-italic">"4 friet met, 2 frikandellen, 1 kroket en een berenklauw"</span>
-            </p>
+            <!-- ===== Voorbeeld-sectie met foto van friet ===== -->
+            <div class="paper">
+                <div class="max-w-5xl mx-auto px-4 py-12 sm:py-16">
+                    <div class="grid sm:grid-cols-2 gap-8 sm:gap-12 items-center">
+                        <div class="order-2 sm:order-1">
+                            <p class="text-brand-light text-xs tracking-[0.25em] uppercase font-bold mb-3">Zo werkt het</p>
+                            <h2 class="font-display text-3xl sm:text-4xl text-brand mb-4 leading-tight">
+                                ZEG WAT JE WIL,<br>WIJ BAKKEN HET.
+                            </h2>
+                            <p class="text-ink/80 text-base leading-relaxed mb-4">
+                                Geen knoppen zoeken in een eindeloze menukaart. Druk &eacute;&eacute;n keer op de microfoon en bestel zoals je het aan de balie zou doen:
+                            </p>
+                            <blockquote class="font-serif italic text-lg sm:text-xl text-brand-dark border-l-4 border-gold pl-4 py-1">
+                                "Doe mij maar vier patatjes met, twee frikandellen en een kroket."
+                            </blockquote>
+                            <p class="text-ink/70 text-sm mt-4">
+                                Onze app vangt het op, maakt er een nette bestelling van &mdash; en jij staat klaar voor de afhaal-balie.
+                            </p>
+                        </div>
+                        <div class="order-1 sm:order-2">
+                            <div class="relative">
+                                <img src="Snackbar3.png" alt="Vers gebakken friet met mayonaise"
+                                     class="w-full rounded-2xl shadow-xl object-cover aspect-[4/3]">
+                                <div class="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 bg-gold text-brand-dark font-display text-lg sm:text-xl px-4 py-2 rounded-lg shadow-lg transform rotate-3">
+                                    VERS GEBAKKEN
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <!-- Decoratie onderaan -->
-            <div class="mt-10 flex items-center gap-3 text-snackred/30 text-2xl">
-                <i class="fa-solid fa-burger"></i>
-                <span class="text-base">&middot;</span>
-                <i class="fa-solid fa-hotdog"></i>
-                <span class="text-base">&middot;</span>
-                <i class="fa-solid fa-drumstick-bite"></i>
-                <span class="text-base">&middot;</span>
-                <i class="fa-solid fa-pepper-hot"></i>
+            <!-- ===== "Kom langs"-sectie met interieurfoto ===== -->
+            <div class="relative overflow-hidden">
+                <img src="Snackbar1.png" alt="Onze zaak van binnen"
+                     class="absolute inset-0 w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/60 to-ink/20"></div>
+                <div class="relative max-w-5xl mx-auto px-4 py-12 sm:py-16">
+                    <div class="max-w-md text-cream">
+                        <p class="text-gold text-xs tracking-[0.25em] uppercase font-bold mb-3">Kom je liever langs?</p>
+                        <h2 class="font-display text-3xl sm:text-4xl leading-tight mb-4">
+                            ALTIJD EEN<br>WARM ONTHAAL
+                        </h2>
+                        <p class="text-cream/85 text-base leading-relaxed mb-4">
+                            Of je je nu vooruit bestelt of zo binnenstapt &mdash; bij ons zijn de friet altijd vers en de praatjes gratis.
+                        </p>
+                        <div class="text-sm text-cream/80 space-y-1 font-medium">
+                            <p>Hapstraat 12, Den Bosch</p>
+                            <p>ma&ndash;za 12:00 &ndash; 22:00 &middot; zo 14:00 &ndash; 22:00</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- ============================================================ -->
         <!-- Scherm: Bestelling                                            -->
         <!-- ============================================================ -->
-        <section id="screen-order" class="hidden">
-            <div class="receipt bg-white rounded-2xl shadow-xl p-4 sm:p-6 mb-4 border-t-4 border-snackred">
-                <h2 class="font-display text-xl text-snackred-dark mb-1 flex items-center gap-2">
-                    <i class="fa-solid fa-receipt"></i>
+        <section id="screen-order" class="hidden max-w-2xl mx-auto px-4 py-10 sm:py-14">
+            <div class="bg-cream rounded-2xl shadow-xl p-5 sm:p-7 mb-4 border-t-4 border-brand">
+                <p class="text-brand-light text-[10px] tracking-[0.3em] uppercase font-bold mb-1">Snackbar De Snelle Hap</p>
+                <h2 class="font-display text-2xl text-brand mb-4 leading-none">
                     JE BESTELLING
                 </h2>
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-3">Snackbar De Snelle Hap</p>
 
-                <div id="transcriptBox" class="hidden bg-snackcream border border-snackyellow/40 rounded-lg p-2.5 mb-3 text-xs sm:text-sm text-gray-700 italic break-words">
-                </div>
-                <div id="noMatchBox" class="hidden bg-amber-50 border border-amber-300 rounded-lg p-2.5 mb-3 text-xs sm:text-sm text-amber-800">
-                </div>
+                <div id="transcriptBox" class="hidden bg-white border border-brand/15 rounded-lg p-3 mb-4 text-sm text-ink/80 font-serif italic break-words"></div>
+                <div id="noMatchBox" class="hidden bg-amber-50 border border-amber-300 rounded-lg p-3 mb-4 text-sm text-amber-900"></div>
 
-                <ul id="orderList" class="divide-y divide-dashed divide-gray-200"></ul>
+                <ul id="orderList" class="divide-y divide-dashed divide-brand/15"></ul>
 
-                <div id="orderTotal" class="hidden border-t-2 border-double border-snackred-dark mt-2 pt-3 flex justify-between items-baseline">
-                    <span class="font-display text-snackred-dark text-base">TOTAAL</span>
-                    <span id="orderTotalAmount" class="font-display text-snackred-dark text-2xl tabular-nums"></span>
+                <div id="orderTotal" class="hidden border-t-2 border-double border-brand mt-3 pt-3 flex justify-between items-baseline">
+                    <span class="font-display text-brand text-lg">TOTAAL</span>
+                    <span id="orderTotalAmount" class="font-display text-brand text-2xl tabular-nums"></span>
                 </div>
 
-                <p id="emptyOrder" class="hidden text-center text-gray-500 text-sm py-6 italic">
+                <p id="emptyOrder" class="hidden text-center text-ink/50 text-sm py-6 italic">
                     Nog niets in je bestelling. Voeg hieronder iets toe of spreek opnieuw in.
                 </p>
 
                 <!-- Handmatig toevoegen -->
-                <div class="border-t-2 border-dashed border-gray-200 pt-3 mt-3">
-                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
-                        <i class="fa-solid fa-plus-circle mr-1"></i> Iets toevoegen
-                    </p>
+                <div class="border-t-2 border-dashed border-brand/15 pt-3 mt-3">
+                    <p class="text-[10px] font-bold text-ink/50 uppercase tracking-[0.2em] mb-2">Iets toevoegen</p>
                     <div class="flex gap-2">
                         <select id="addSnackSelect"
-                            class="flex-1 min-w-0 border-2 border-gray-200 rounded-lg px-2 py-2 text-sm bg-white font-medium focus:ring-2 focus:ring-snackred focus:border-snackred outline-none"></select>
+                            class="flex-1 min-w-0 border-2 border-brand/20 rounded-lg px-3 py-2.5 text-sm bg-white font-medium focus:ring-2 focus:ring-brand focus:border-brand outline-none"></select>
                         <input id="addCountInput" type="number" min="1" max="40" value="1"
-                            class="w-16 border-2 border-gray-200 rounded-lg px-2 py-2 text-sm text-center font-bold focus:ring-2 focus:ring-snackred focus:border-snackred outline-none">
+                            class="w-16 border-2 border-brand/20 rounded-lg px-2 py-2.5 text-sm text-center font-bold focus:ring-2 focus:ring-brand focus:border-brand outline-none">
                         <button id="addItemBtn"
-                            class="bg-snackred text-white rounded-lg px-4 py-2 text-sm font-bold hover:bg-snackred-dark active:scale-95 transition-all shadow-sm">
-                            <i class="fa-solid fa-plus"></i>
+                            class="bg-brand text-cream rounded-lg px-4 py-2.5 text-sm font-bold hover:bg-brand-dark active:scale-95 transition-all shadow-sm">
+                            Toevoegen
                         </button>
                     </div>
                 </div>
@@ -226,12 +252,12 @@
 
             <div class="flex gap-2">
                 <button id="reRecordBtn"
-                    class="flex-1 bg-white border-2 border-snackred text-snackred rounded-xl py-3 font-display text-sm hover:bg-red-50 active:scale-95 transition-all shadow-sm">
-                    <i class="fa-solid fa-microphone mr-1"></i>OPNIEUW
+                    class="flex-1 bg-white border-2 border-brand text-brand rounded-xl py-3 font-display text-base hover:bg-brand/5 active:scale-95 transition-all shadow-sm">
+                    OPNIEUW INSPREKEN
                 </button>
                 <button id="okBtn"
-                    class="flex-1 bg-green-600 hover:bg-green-700 active:scale-95 text-white rounded-xl py-3 font-display text-sm shadow-md transition-all disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none">
-                    <i class="fa-solid fa-check mr-1"></i>OK, BESTELLEN
+                    class="flex-1 bg-ketchup hover:bg-ketchup-dark active:scale-95 text-cream rounded-xl py-3 font-display text-base shadow-md transition-all disabled:bg-ink/20 disabled:cursor-not-allowed disabled:shadow-none">
+                    OK, BESTELLEN
                 </button>
             </div>
         </section>
@@ -239,76 +265,87 @@
         <!-- ============================================================ -->
         <!-- Scherm: Klaar                                                 -->
         <!-- ============================================================ -->
-        <section id="screen-done" class="hidden text-center py-6">
-            <div class="inline-flex items-center justify-center w-24 h-24 bg-green-100 rounded-full mb-4 shadow-inner border-4 border-green-200">
-                <i class="fa-solid fa-check text-5xl text-green-600"></i>
+        <section id="screen-done" class="hidden max-w-2xl mx-auto px-4 py-12 text-center">
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-cream rounded-full mb-5 shadow-inner border-4 border-gold">
+                <svg class="w-12 h-12 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="5 12 10 17 19 7"/>
+                </svg>
             </div>
-            <h2 class="font-display text-2xl sm:text-3xl text-snackred-dark mb-1">BEDANKT VOOR JE BESTELLING!</h2>
-            <p class="text-gray-700 mb-1 font-medium">Je bestelling is doorgegeven naar de keuken.</p>
-            <p class="text-xs text-gray-400 italic mb-6">(Dit is een demo &mdash; de rest is niet uitgewerkt.)</p>
+            <h2 class="font-display text-3xl sm:text-4xl text-brand mb-2 leading-none">
+                BEDANKT VOOR JE BESTELLING!
+            </h2>
+            <p class="text-ink/80 mb-1 font-medium">Je bestelling is doorgegeven naar de keuken.</p>
+            <p class="text-xs text-ink/50 italic mb-6">(Dit is een demo &mdash; de rest is niet uitgewerkt.)</p>
 
-            <div class="receipt bg-white rounded-xl shadow-lg inline-block text-left px-6 py-5 mb-6 min-w-[240px] border-t-4 border-snackred">
-                <p class="font-display text-snackred-dark text-sm mb-1">SNACKBAR DE SNELLE HAP</p>
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest border-b border-dashed border-gray-200 pb-2 mb-2">Bestelbon &middot; demo</p>
-                <ul id="doneList" class="divide-y divide-dashed divide-gray-200"></ul>
-                <div class="border-t-2 border-double border-snackred-dark mt-2 pt-2 flex justify-between items-baseline gap-6">
-                    <span class="font-display text-snackred-dark text-sm">TOTAAL</span>
-                    <span id="doneTotalAmount" class="font-display text-snackred-dark text-lg tabular-nums"></span>
+            <div class="bg-cream rounded-xl shadow-lg inline-block text-left px-6 py-5 mb-6 min-w-[260px] border-t-4 border-brand">
+                <p class="font-display text-brand text-base mb-1">SNACKBAR DE SNELLE HAP</p>
+                <p class="text-[10px] text-ink/50 uppercase tracking-[0.2em] border-b border-dashed border-brand/20 pb-2 mb-2">Bestelbon &middot; demo</p>
+                <ul id="doneList" class="divide-y divide-dashed divide-brand/15"></ul>
+                <div class="border-t-2 border-double border-brand mt-2 pt-2 flex justify-between items-baseline gap-6">
+                    <span class="font-display text-brand text-sm">TOTAAL</span>
+                    <span id="doneTotalAmount" class="font-display text-brand text-lg tabular-nums"></span>
                 </div>
             </div>
             <br>
             <button id="restartBtn"
-                class="bg-snackred hover:bg-snackred-dark text-white rounded-xl px-6 py-3 font-display text-sm shadow-md active:scale-95 transition-all">
-                <i class="fa-solid fa-rotate-right mr-1"></i>OPNIEUW BEGINNEN
+                class="bg-brand hover:bg-brand-dark text-cream rounded-xl px-6 py-3 font-display text-base shadow-md active:scale-95 transition-all">
+                OPNIEUW BEGINNEN
             </button>
         </section>
 
     </main>
 
+    <!-- ===== Footer (alleen op home) ===== -->
+    <footer id="footer" class="bg-brand text-cream/80 py-6 mt-0">
+        <div class="max-w-5xl mx-auto px-4 text-center text-xs">
+            <p class="font-serif italic">&copy; Snackbar De Snelle Hap &mdash; demo &middot; spraak-bestelling</p>
+        </div>
+    </footer>
+
     <!-- ============================================================ -->
     <!-- Voice modal                                                   -->
     <!-- ============================================================ -->
-    <div id="voiceModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
-            <div class="bg-snackred text-snackcream px-4 py-3 flex justify-between items-center">
-                <h3 class="font-display text-sm tracking-wide">SPREEK JE BESTELLING IN</h3>
-                <button onclick="closeVoiceModal()" class="text-snackcream/80 hover:text-white" aria-label="Sluiten">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
+    <div id="voiceModal" class="hidden fixed inset-0 bg-ink/70 z-50 flex items-center justify-center p-4">
+        <div class="bg-cream rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border-2 border-brand/20">
+            <div class="bg-brand text-cream px-4 py-3 flex justify-between items-center">
+                <h3 class="font-display text-base tracking-wide">SPREEK JE BESTELLING IN</h3>
+                <button onclick="closeVoiceModal()" class="text-cream/80 hover:text-cream text-2xl leading-none" aria-label="Sluiten">&times;</button>
             </div>
-            <div class="awning-stripes h-2"></div>
 
             <div class="p-6">
                 <div id="voiceStatus" class="text-center">
                     <!-- REC indicator -->
-                    <div class="inline-flex items-center gap-2 bg-red-50 border border-red-200 rounded-full px-3 py-1 mb-4">
-                        <span class="w-2.5 h-2.5 bg-red-600 rounded-full rec-dot"></span>
-                        <span class="text-red-700 font-bold text-[10px] uppercase tracking-widest">REC &middot; aan het opnemen</span>
+                    <div class="inline-flex items-center gap-2 bg-ketchup/10 border border-ketchup/30 rounded-full px-3 py-1 mb-4">
+                        <span class="w-2.5 h-2.5 bg-ketchup rounded-full rec-dot"></span>
+                        <span class="text-ketchup-dark font-bold text-[10px] uppercase tracking-widest">REC &middot; aan het opnemen</span>
                     </div>
 
                     <!-- Mic met pulse-ring -->
                     <div class="relative inline-flex w-20 h-20 items-center justify-center">
-                        <span class="absolute inset-0 bg-snackred rounded-full pulse-ring"></span>
-                        <span class="absolute inset-0 bg-snackred rounded-full shadow-lg"></span>
-                        <i class="fa-solid fa-microphone text-3xl text-white relative drop-shadow"></i>
+                        <span class="absolute inset-0 bg-ketchup rounded-full pulse-ring"></span>
+                        <span class="absolute inset-0 bg-ketchup rounded-full shadow-lg"></span>
+                        <svg class="w-9 h-9 text-cream relative drop-shadow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3Z"/>
+                            <path d="M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.93V20H8a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-2.07A7 7 0 0 0 19 11Z"/>
+                        </svg>
                     </div>
 
-                    <!-- Live audio waveform (24 bars) -->
+                    <!-- Live audio waveform -->
                     <div id="visualizer" class="flex items-center justify-center gap-1 h-14 mt-4"></div>
 
-                    <p id="voiceStatusText" class="text-gray-700 mt-2 font-semibold text-sm">Luistert mee...</p>
-                    <p class="text-xs text-gray-400 italic">Zeg bijv. "4 friet met, 2 frikandellen"</p>
+                    <p id="voiceStatusText" class="text-ink mt-2 font-semibold text-sm">Luistert mee...</p>
+                    <p class="text-xs text-ink/50 italic">Zeg bijv. "4 friet met, 2 frikandellen"</p>
 
                     <button id="voiceStopBtn" onclick="stopRecording()"
-                        class="mt-5 px-8 py-3 bg-snackred text-white rounded-xl font-display text-sm tracking-wide hover:bg-snackred-dark active:scale-95 transition-all shadow-md disabled:opacity-60 disabled:cursor-wait">
-                        <i class="fa-solid fa-check mr-1"></i>KLAAR
+                        class="mt-5 px-8 py-3 bg-brand text-cream rounded-xl font-display text-base tracking-wide hover:bg-brand-dark active:scale-95 transition-all shadow-md disabled:opacity-60 disabled:cursor-wait">
+                        KLAAR
                     </button>
                 </div>
 
-                <div id="voiceError" class="hidden text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+                <div id="voiceError" class="hidden text-sm text-ketchup-dark bg-ketchup/10 border border-ketchup/30 rounded-lg p-3"></div>
                 <div id="voiceErrorActions" class="hidden mt-3 flex gap-2 justify-end">
-                    <button onclick="closeVoiceModal()" class="px-3 py-2 text-sm rounded-lg bg-gray-100 hover:bg-gray-200 font-bold">Annuleren</button>
-                    <button onclick="beginRecognition()" class="px-3 py-2 text-sm rounded-lg bg-snackred text-white font-bold hover:bg-snackred-dark">Opnieuw</button>
+                    <button onclick="closeVoiceModal()" class="px-3 py-2 text-sm rounded-lg bg-ink/10 hover:bg-ink/15 font-bold">Annuleren</button>
+                    <button onclick="beginRecognition()" class="px-3 py-2 text-sm rounded-lg bg-brand text-cream font-bold hover:bg-brand-dark">Opnieuw</button>
                 </div>
             </div>
         </div>
@@ -326,17 +363,16 @@
             'Mexicano', 'Kipcorn', 'Kipnuggets', 'Hamburger'
         ];
 
-        // Fictieve prijzen (€) per snack — zelfde index als `snacks`
         const prices = [
-            3.50, 3.80, 4.20,  // friet, friet met, friet speciaal
-            2.50, 3.20,        // frikandel, frikandel speciaal
-            2.30, 2.60, 5.50,  // kroket, bamischijf, bitterballen (portie)
-            2.40, 4.00, 3.50,  // kaassoufflé, berenklauw, loempia
-            2.50, 2.60, 4.50,  // mexicano, kipcorn, kipnuggets (portie)
-            3.80               // hamburger
+            3.50, 3.80, 4.20,
+            2.50, 3.20,
+            2.30, 2.60, 5.50,
+            2.40, 4.00, 3.50,
+            2.50, 2.60, 4.50,
+            3.80
         ];
 
-        const fmtEur = (n) => '€ ' + n.toFixed(2).replace('.', ',');
+        const fmtEur = (n) => '€ ' + n.toFixed(2).replace('.', ',');
 
         const snackAliases = {
             0:  ['friet', 'frietje', 'patat', 'patatje'],
@@ -460,7 +496,7 @@
         }
 
         // ============================================================
-        // Audio visualizer (echte waveform via Web Audio API)
+        // Audio visualizer
         // ============================================================
         const NUM_BARS = 24;
         let audioContext = null, analyser = null, mediaStream = null, visAnimId = null;
@@ -470,7 +506,7 @@
             vis.innerHTML = '';
             for (let i = 0; i < NUM_BARS; i++) {
                 const bar = document.createElement('div');
-                bar.className = 'vis-bar w-1.5 sm:w-2 bg-snackred rounded-full';
+                bar.className = 'vis-bar w-1.5 sm:w-2 bg-ketchup rounded-full';
                 bar.style.height = '4px';
                 vis.appendChild(bar);
             }
@@ -487,7 +523,6 @@
                 source.connect(analyser);
                 animateBars();
             } catch (e) {
-                // Geen visualizer mogelijk; mic-icoon + REC dot blijven als feedback
                 console.log('Visualizer niet beschikbaar:', e);
             }
         }
@@ -499,7 +534,6 @@
             const bars = document.querySelectorAll('#visualizer .vis-bar');
             const minH = 4, maxH = 48;
             bars.forEach((bar, i) => {
-                // Symmetrisch (links/rechts) rond midden, lage frequenties in het midden
                 const center = bars.length / 2;
                 const distFromCenter = Math.abs(i - center + 0.5);
                 const binIdx = Math.min(data.length - 1, Math.floor(distFromCenter * 1.6) + 1);
@@ -522,7 +556,6 @@
                 audioContext = null;
             }
             analyser = null;
-            // Reset bars naar minimum
             document.querySelectorAll('#visualizer .vis-bar').forEach(b => b.style.height = '4px');
         }
 
@@ -625,7 +658,6 @@
 
             try {
                 recognition.start();
-                // Start de visualizer parallel (vraagt eigen mic-stream voor analyser)
                 startVisualizer();
             } catch (e) {
                 showVoiceError('Kon spraakherkenning niet starten: ' + e.message);
@@ -664,19 +696,20 @@
             ['screen-home', 'screen-order', 'screen-done'].forEach(s => {
                 document.getElementById(s).classList.toggle('hidden', s !== id);
             });
+            window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
         function showOrderScreen(transcript, noMatch) {
             const tBox = document.getElementById('transcriptBox');
             if (transcript) {
-                tBox.innerHTML = '<i class="fa-solid fa-quote-left text-snackred/40 mr-1"></i>' + transcript;
+                tBox.textContent = '“' + transcript + '”';
                 tBox.classList.remove('hidden');
             } else {
                 tBox.classList.add('hidden');
             }
             const nmBox = document.getElementById('noMatchBox');
             if (noMatch) {
-                nmBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Geen snacks herkend. Voeg ze hieronder handmatig toe of spreek opnieuw in.';
+                nmBox.textContent = 'Geen snacks herkend in wat je inhebt gezegd. Voeg ze hieronder handmatig toe of spreek opnieuw in.';
                 nmBox.classList.remove('hidden');
             } else {
                 nmBox.classList.add('hidden');
@@ -719,22 +752,20 @@
                 li.className = 'flex items-center justify-between gap-2 py-3';
                 li.innerHTML = `
                     <div class="flex-1 min-w-0">
-                        <div class="font-semibold text-gray-900 truncate">${snacks[snackIdx]}</div>
-                        <div class="text-[11px] text-gray-500 tabular-nums">${fmtEur(unit)} per stuk</div>
+                        <div class="font-semibold text-ink truncate">${snacks[snackIdx]}</div>
+                        <div class="text-[11px] text-ink/50 tabular-nums">${fmtEur(unit)} per stuk</div>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <button data-action="dec" data-idx="${snackIdx}" aria-label="Minder"
-                            class="w-9 h-9 rounded-full bg-snackcream border-2 border-snackred/30 hover:bg-snackyellow-light hover:border-snackred active:scale-95 text-snackred-dark font-bold text-xl leading-none flex items-center justify-center transition-all">−</button>
-                        <span class="font-display text-snackred-dark min-w-[2ch] text-center text-xl tabular-nums">${count}</span>
+                            class="w-9 h-9 rounded-full bg-cream border-2 border-brand/25 hover:bg-gold/30 hover:border-brand active:scale-95 text-brand font-bold text-xl leading-none flex items-center justify-center transition-all">−</button>
+                        <span class="font-display text-brand min-w-[2ch] text-center text-xl tabular-nums">${count}</span>
                         <button data-action="inc" data-idx="${snackIdx}" aria-label="Meer"
-                            class="w-9 h-9 rounded-full bg-snackcream border-2 border-snackred/30 hover:bg-snackyellow-light hover:border-snackred active:scale-95 text-snackred-dark font-bold text-xl leading-none flex items-center justify-center transition-all">+</button>
+                            class="w-9 h-9 rounded-full bg-cream border-2 border-brand/25 hover:bg-gold/30 hover:border-brand active:scale-95 text-brand font-bold text-xl leading-none flex items-center justify-center transition-all">+</button>
                     </div>
-                    <div class="flex flex-col items-end gap-1 min-w-[64px]">
-                        <span class="font-display text-snackred-dark text-sm tabular-nums">${fmtEur(subtotal)}</span>
+                    <div class="flex flex-col items-end gap-1 min-w-[68px]">
+                        <span class="font-display text-brand text-sm tabular-nums">${fmtEur(subtotal)}</span>
                         <button data-action="del" data-idx="${snackIdx}" aria-label="Verwijderen"
-                            class="w-7 h-7 rounded-full bg-red-50 hover:bg-red-100 active:scale-95 text-red-600 flex items-center justify-center transition-all">
-                            <i class="fa-solid fa-trash text-[10px]"></i>
-                        </button>
+                            class="text-[10px] text-ketchup-dark hover:underline">verwijderen</button>
                     </div>
                 `;
                 list.appendChild(li);
@@ -797,12 +828,12 @@
                     const subtotal = prices[idx] * count;
                     grandTotal += subtotal;
                     const li = document.createElement('li');
-                    li.className = 'flex justify-between items-baseline py-1.5 text-gray-800 gap-4';
+                    li.className = 'flex justify-between items-baseline py-1.5 text-ink gap-4';
                     li.innerHTML = `
                         <span class="font-medium">
-                            <span class="font-display text-snackred-dark tabular-nums mr-1">${count}&times;</span>${snacks[idx]}
+                            <span class="font-display text-brand tabular-nums mr-1">${count}&times;</span>${snacks[idx]}
                         </span>
-                        <span class="font-display text-snackred-dark tabular-nums">${fmtEur(subtotal)}</span>
+                        <span class="font-display text-brand tabular-nums">${fmtEur(subtotal)}</span>
                     `;
                     list.appendChild(li);
                 });
