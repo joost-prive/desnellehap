@@ -497,8 +497,13 @@
 
         // ============================================================
         // Audio visualizer
+        // Op desktop: echte waveform via Web Audio API.
+        // Op mobiel: fake sinus-golf — getUserMedia zou daar de mic
+        // afpakken van SpeechRecognition (mic-toegang is exclusief op
+        // bv. Android), waardoor de herkenning "no-speech" geeft.
         // ============================================================
         const NUM_BARS = 24;
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         let audioContext = null, analyser = null, mediaStream = null, visAnimId = null;
 
         function buildVisualizer() {
@@ -513,6 +518,10 @@
         }
 
         async function startVisualizer() {
+            if (isMobile) {
+                startFakeWave();
+                return;
+            }
             try {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -523,7 +532,8 @@
                 source.connect(analyser);
                 animateBars();
             } catch (e) {
-                console.log('Visualizer niet beschikbaar:', e);
+                console.log('Echte visualizer niet beschikbaar, fallback naar fake wave:', e);
+                startFakeWave();
             }
         }
 
@@ -542,6 +552,24 @@
                 bar.style.height = h + 'px';
             });
             visAnimId = requestAnimationFrame(animateBars);
+        }
+
+        // Fake sinus-golf voor mobiel — vraagt geen mic-stream
+        function startFakeWave() {
+            const bars = document.querySelectorAll('#visualizer .vis-bar');
+            const start = performance.now();
+            function tick(now) {
+                const t = (now - start) / 1000;
+                bars.forEach((bar, i) => {
+                    const phase = i * 0.45 - t * 5;
+                    const v = (Math.sin(phase) + 1) / 2;          // 0..1
+                    const env = 0.6 + 0.4 * Math.sin(t * 1.7);    // langzame demping
+                    const h = 6 + v * env * 30;
+                    bar.style.height = h + 'px';
+                });
+                visAnimId = requestAnimationFrame(tick);
+            }
+            visAnimId = requestAnimationFrame(tick);
         }
 
         function stopVisualizer() {
