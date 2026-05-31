@@ -1,0 +1,15 @@
+# Afbeeldingen en lokale assets (niet meenemen in repo)
+*.png
+*.jpg
+*.jpeg
+
+# Lokale map met werkmateriaal
+ClashRoomsKoelkasten/
+
+# Claude Code lokale configuratie
+.claude/
+
+# OS-troep
+Thumbs.db
+desktop.ini
+.DS_Store

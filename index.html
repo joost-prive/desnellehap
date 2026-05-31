@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="nl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snackbar De Snelle Hap</title>
+    <meta name="description" content="Spreek je bestelling in bij Snackbar De Snelle Hap">
+    <meta name="theme-color" content="#d62828">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Bowlby One"', 'system-ui', 'sans-serif'],
+                        sans: ['Fredoka', 'system-ui', 'sans-serif']
+                    },
+                    colors: {
+                        snackred: {
+                            DEFAULT: '#d62828',
+                            dark: '#a31e1e',
+                            light: '#f4a3a3'
+                        },
+                        snackyellow: {
+                            DEFAULT: '#f9c80e',
+                            dark: '#d9aa00',
+                            light: '#fde68a'
+                        },
+                        snackcream: '#fff8e7'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Fredoka', system-ui, sans-serif;
+            background-color: #fff8e7;
+            background-image:
+                repeating-linear-gradient(135deg,
+                    rgba(214, 40, 40, 0.025) 0,
+                    rgba(214, 40, 40, 0.025) 1px,
+                    transparent 1px,
+                    transparent 22px);
+        }
+
+        .font-display { font-family: 'Bowlby One', system-ui, sans-serif; letter-spacing: 0.5px; }
+
+        /* Awning: rood/wit verticale stripes onder de header */
+        .awning-stripes {
+            background-image: repeating-linear-gradient(90deg,
+                #d62828 0, #d62828 22px,
+                #fff8e7 22px, #fff8e7 44px);
+        }
+
+        /* Scalloped bottom edge via SVG (zigzag-awning) */
+        .scallop-bottom {
+            -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'><path d='M0 0 L0 8 L10 0 L20 8 L30 0 L40 8 L50 0 L60 8 L70 0 L80 8 L90 0 L100 8 L110 0 L120 8 L120 0 Z'/></svg>") bottom/120px 12px repeat-x;
+                    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'><path d='M0 0 L0 8 L10 0 L20 8 L30 0 L40 8 L50 0 L60 8 L70 0 L80 8 L90 0 L100 8 L110 0 L120 8 L120 0 Z'/></svg>") bottom/120px 12px repeat-x;
+        }
+
+        /* Ronde puls-ring achter mic */
+        .pulse-ring {
+            animation: pulse-ring 1.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) infinite;
+        }
+        @keyframes pulse-ring {
+            0%   { transform: scale(0.85); opacity: 0.7; }
+            70%  { transform: scale(1.3);  opacity: 0;   }
+            100% { transform: scale(1.3);  opacity: 0;   }
+        }
+
+        /* REC dot puls */
+        .rec-dot {
+            animation: rec-blink 1s ease-in-out infinite;
+        }
+        @keyframes rec-blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Visualizer-bars vloeiend laten meebewegen */
+        .vis-bar {
+            transition: height 60ms linear;
+        }
+
+        /* Receipt-tear top edge */
+        .receipt {
+            position: relative;
+        }
+        .receipt::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: -10px;
+            height: 10px;
+            background:
+                radial-gradient(circle at 8px 10px, #fff 4px, transparent 4.5px) repeat-x;
+            background-size: 16px 10px;
+        }
+
+        /* Tekst-schaduw voor displayfont (vintage signage feel) */
+        .sign-shadow {
+            text-shadow:
+                2px 2px 0 #a31e1e,
+                3px 3px 0 rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-900 antialiased">
+
+    <!-- ===== Header / Signbord ===== -->
+    <header class="relative">
+        <div class="bg-snackred text-snackcream shadow-xl">
+            <div class="max-w-2xl mx-auto px-4 pt-5 pb-6 text-center">
+                <div class="text-snackyellow text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold mb-1">
+                    &mdash; Sinds 1968 &mdash;
+                </div>
+                <h1 class="font-display text-3xl sm:text-5xl leading-none sign-shadow">
+                    <span class="text-snackyellow inline-block transform -rotate-6 mr-1">🍟</span>
+                    Snackbar
+                    <span class="block text-snackcream">De Snelle Hap</span>
+                </h1>
+                <p class="text-snackcream/90 text-xs sm:text-sm italic mt-2 font-medium">
+                    Vers gebakken &middot; Lekker snel
+                </p>
+            </div>
+        </div>
+        <!-- Awning stripes -->
+        <div class="awning-stripes h-4 scallop-bottom"></div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-4 py-8">
+
+        <!-- ============================================================ -->
+        <!-- Scherm: Home                                                  -->
+        <!-- ============================================================ -->
+        <section id="screen-home" class="flex flex-col items-center text-center">
+            <div class="inline-block bg-snackyellow text-snackred-dark font-display text-sm sm:text-base px-4 py-1.5 rounded-full shadow-md mb-4 transform -rotate-1">
+                BESTEL MET JE STEM!
+            </div>
+            <p class="text-gray-800 text-base sm:text-lg mb-8 max-w-md font-medium">
+                Geen gedoe met menu's doorzoeken &mdash; druk op de knop en zeg gewoon wat je wilt.
+            </p>
+
+            <!-- Big mic button met gele "halo" achtergrond -->
+            <div class="relative">
+                <span class="absolute inset-0 bg-snackyellow rounded-full blur-2xl opacity-60 scale-110"></span>
+                <button id="recordBtn"
+                    class="relative w-60 h-60 sm:w-72 sm:h-72 rounded-full bg-snackred hover:bg-snackred-dark active:scale-95 text-white shadow-[0_15px_40px_-10px_rgba(214,40,40,0.6)] transition-all duration-150 flex flex-col items-center justify-center gap-3 border-[6px] border-snackyellow ring-4 ring-snackred-dark/30">
+                    <div class="relative">
+                        <i class="fa-solid fa-microphone text-7xl sm:text-8xl drop-shadow"></i>
+                        <i class="fa-solid fa-wifi absolute -top-2 -right-6 text-2xl text-snackyellow rotate-45 opacity-90"></i>
+                    </div>
+                    <span class="font-display text-base sm:text-lg leading-tight px-6">
+                        SPREEK HIER JE<br>BESTELLING IN
+                    </span>
+                </button>
+            </div>
+
+            <p class="text-xs sm:text-sm text-gray-600 mt-8 max-w-xs italic leading-relaxed">
+                Bijv. <span class="text-snackred-dark font-bold not-italic">"4 friet met, 2 frikandellen, 1 kroket en een berenklauw"</span>
+            </p>
+
+            <!-- Decoratie onderaan -->
+            <div class="mt-10 flex items-center gap-3 text-snackred/30 text-2xl">
+                <i class="fa-solid fa-burger"></i>
+                <span class="text-base">&middot;</span>
+                <i class="fa-solid fa-hotdog"></i>
+                <span class="text-base">&middot;</span>
+                <i class="fa-solid fa-drumstick-bite"></i>
+                <span class="text-base">&middot;</span>
+                <i class="fa-solid fa-pepper-hot"></i>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Scherm: Bestelling                                            -->
+        <!-- ============================================================ -->
+        <section id="screen-order" class="hidden">
+            <div class="receipt bg-white rounded-2xl shadow-xl p-4 sm:p-6 mb-4 border-t-4 border-snackred">
+                <h2 class="font-display text-xl text-snackred-dark mb-1 flex items-center gap-2">
+                    <i class="fa-solid fa-receipt"></i>
+                    JE BESTELLING
+                </h2>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-3">Snackbar De Snelle Hap</p>
+
+                <div id="transcriptBox" class="hidden bg-snackcream border border-snackyellow/40 rounded-lg p-2.5 mb-3 text-xs sm:text-sm text-gray-700 italic break-words">
+                </div>
+                <div id="noMatchBox" class="hidden bg-amber-50 border border-amber-300 rounded-lg p-2.5 mb-3 text-xs sm:text-sm text-amber-800">
+                </div>
+
+                <ul id="orderList" class="divide-y divide-dashed divide-gray-200"></ul>
+
+                <div id="orderTotal" class="hidden border-t-2 border-double border-snackred-dark mt-2 pt-3 flex justify-between items-baseline">
+                    <span class="font-display text-snackred-dark text-base">TOTAAL</span>
+                    <span id="orderTotalAmount" class="font-display text-snackred-dark text-2xl tabular-nums"></span>
+                </div>
+
+                <p id="emptyOrder" class="hidden text-center text-gray-500 text-sm py-6 italic">
+                    Nog niets in je bestelling. Voeg hieronder iets toe of spreek opnieuw in.
+                </p>
+
+                <!-- Handmatig toevoegen -->
+                <div class="border-t-2 border-dashed border-gray-200 pt-3 mt-3">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
+                        <i class="fa-solid fa-plus-circle mr-1"></i> Iets toevoegen
+                    </p>
+                    <div class="flex gap-2">
+                        <select id="addSnackSelect"
+                            class="flex-1 min-w-0 border-2 border-gray-200 rounded-lg px-2 py-2 text-sm bg-white font-medium focus:ring-2 focus:ring-snackred focus:border-snackred outline-none"></select>
+                        <input id="addCountInput" type="number" min="1" max="40" value="1"
+                            class="w-16 border-2 border-gray-200 rounded-lg px-2 py-2 text-sm text-center font-bold focus:ring-2 focus:ring-snackred focus:border-snackred outline-none">
+                        <button id="addItemBtn"
+                            class="bg-snackred text-white rounded-lg px-4 py-2 text-sm font-bold hover:bg-snackred-dark active:scale-95 transition-all shadow-sm">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button id="reRecordBtn"
+                    class="flex-1 bg-white border-2 border-snackred text-snackred rounded-xl py-3 font-display text-sm hover:bg-red-50 active:scale-95 transition-all shadow-sm">
+                    <i class="fa-solid fa-microphone mr-1"></i>OPNIEUW
+                </button>
+                <button id="okBtn"
+                    class="flex-1 bg-green-600 hover:bg-green-700 active:scale-95 text-white rounded-xl py-3 font-display text-sm shadow-md transition-all disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none">
+                    <i class="fa-solid fa-check mr-1"></i>OK, BESTELLEN
+                </button>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Scherm: Klaar                                                 -->
+        <!-- ============================================================ -->
+        <section id="screen-done" class="hidden text-center py-6">
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-green-100 rounded-full mb-4 shadow-inner border-4 border-green-200">
+                <i class="fa-solid fa-check text-5xl text-green-600"></i>
+            </div>
+            <h2 class="font-display text-2xl sm:text-3xl text-snackred-dark mb-1">BEDANKT VOOR JE BESTELLING!</h2>
+            <p class="text-gray-700 mb-1 font-medium">Je bestelling is doorgegeven naar de keuken.</p>
+            <p class="text-xs text-gray-400 italic mb-6">(Dit is een demo &mdash; de rest is niet uitgewerkt.)</p>
+
+            <div class="receipt bg-white rounded-xl shadow-lg inline-block text-left px-6 py-5 mb-6 min-w-[240px] border-t-4 border-snackred">
+                <p class="font-display text-snackred-dark text-sm mb-1">SNACKBAR DE SNELLE HAP</p>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest border-b border-dashed border-gray-200 pb-2 mb-2">Bestelbon &middot; demo</p>
+                <ul id="doneList" class="divide-y divide-dashed divide-gray-200"></ul>
+                <div class="border-t-2 border-double border-snackred-dark mt-2 pt-2 flex justify-between items-baseline gap-6">
+                    <span class="font-display text-snackred-dark text-sm">TOTAAL</span>
+                    <span id="doneTotalAmount" class="font-display text-snackred-dark text-lg tabular-nums"></span>
+                </div>
+            </div>
+            <br>
+            <button id="restartBtn"
+                class="bg-snackred hover:bg-snackred-dark text-white rounded-xl px-6 py-3 font-display text-sm shadow-md active:scale-95 transition-all">
+                <i class="fa-solid fa-rotate-right mr-1"></i>OPNIEUW BEGINNEN
+            </button>
+        </section>
+
+    </main>
+
+    <!-- ============================================================ -->
+    <!-- Voice modal                                                   -->
+    <!-- ============================================================ -->
+    <div id="voiceModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+            <div class="bg-snackred text-snackcream px-4 py-3 flex justify-between items-center">
+                <h3 class="font-display text-sm tracking-wide">SPREEK JE BESTELLING IN</h3>
+                <button onclick="closeVoiceModal()" class="text-snackcream/80 hover:text-white" aria-label="Sluiten">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="awning-stripes h-2"></div>
+
+            <div class="p-6">
+                <div id="voiceStatus" class="text-center">
+                    <!-- REC indicator -->
+                    <div class="inline-flex items-center gap-2 bg-red-50 border border-red-200 rounded-full px-3 py-1 mb-4">
+                        <span class="w-2.5 h-2.5 bg-red-600 rounded-full rec-dot"></span>
+                        <span class="text-red-700 font-bold text-[10px] uppercase tracking-widest">REC &middot; aan het opnemen</span>
+                    </div>
+
+                    <!-- Mic met pulse-ring -->
+                    <div class="relative inline-flex w-20 h-20 items-center justify-center">
+                        <span class="absolute inset-0 bg-snackred rounded-full pulse-ring"></span>
+                        <span class="absolute inset-0 bg-snackred rounded-full shadow-lg"></span>
+                        <i class="fa-solid fa-microphone text-3xl text-white relative drop-shadow"></i>
+                    </div>
+
+                    <!-- Live audio waveform (24 bars) -->
+                    <div id="visualizer" class="flex items-center justify-center gap-1 h-14 mt-4"></div>
+
+                    <p id="voiceStatusText" class="text-gray-700 mt-2 font-semibold text-sm">Luistert mee...</p>
+                    <p class="text-xs text-gray-400 italic">Zeg bijv. "4 friet met, 2 frikandellen"</p>
+
+                    <button id="voiceStopBtn" onclick="stopRecording()"
+                        class="mt-5 px-8 py-3 bg-snackred text-white rounded-xl font-display text-sm tracking-wide hover:bg-snackred-dark active:scale-95 transition-all shadow-md disabled:opacity-60 disabled:cursor-wait">
+                        <i class="fa-solid fa-check mr-1"></i>KLAAR
+                    </button>
+                </div>
+
+                <div id="voiceError" class="hidden text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+                <div id="voiceErrorActions" class="hidden mt-3 flex gap-2 justify-end">
+                    <button onclick="closeVoiceModal()" class="px-3 py-2 text-sm rounded-lg bg-gray-100 hover:bg-gray-200 font-bold">Annuleren</button>
+                    <button onclick="beginRecognition()" class="px-3 py-2 text-sm rounded-lg bg-snackred text-white font-bold hover:bg-snackred-dark">Opnieuw</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // Snack-catalogus
+        // ============================================================
+        const snacks = [
+            'Friet', 'Friet met', 'Friet speciaal',
+            'Frikandel', 'Frikandel speciaal',
+            'Kroket', 'Bamischijf', 'Bitterballen',
+            'Kaassoufflé', 'Berenklauw', 'Loempia',
+            'Mexicano', 'Kipcorn', 'Kipnuggets', 'Hamburger'
+        ];
+
+        // Fictieve prijzen (€) per snack — zelfde index als `snacks`
+        const prices = [
+            3.50, 3.80, 4.20,  // friet, friet met, friet speciaal
+            2.50, 3.20,        // frikandel, frikandel speciaal
+            2.30, 2.60, 5.50,  // kroket, bamischijf, bitterballen (portie)
+            2.40, 4.00, 3.50,  // kaassoufflé, berenklauw, loempia
+            2.50, 2.60, 4.50,  // mexicano, kipcorn, kipnuggets (portie)
+            3.80               // hamburger
+        ];
+
+        const fmtEur = (n) => '€ ' + n.toFixed(2).replace('.', ',');
+
+        const snackAliases = {
+            0:  ['friet', 'frietje', 'patat', 'patatje'],
+            1:  ['friet met', 'frietje met', 'patat met', 'patatje met', 'friet mayo', 'frietje mayo', 'patat mayo', 'patatje mayo'],
+            2:  ['friet speciaal', 'frietje speciaal', 'patat speciaal', 'patatje speciaal'],
+            3:  ['frikandel', 'frikadel'],
+            4:  ['frikandel speciaal', 'frikadel speciaal'],
+            5:  ['kroket', 'rundvleeskroket'],
+            6:  ['bamischijf', 'bami schijf', 'bamie schijf'],
+            7:  ['bitterbal', 'bitterballen'],
+            8:  ['kaassoufflé', 'kaas souffle', 'kaassouffle', 'kaassoufle', 'kaas soufflé'],
+            9:  ['berenklauw', 'berenhap'],
+            10: ['loempia', 'lumpia'],
+            11: ['mexicano', 'mexicaan', 'mexicaantje'],
+            12: ['kipcorn', 'kipkorn', 'kip corn'],
+            13: ['kipnuggets', 'kip nuggets', 'nuggets'],
+            14: ['hamburger', 'burger']
+        };
+
+        const numberWords = {
+            'nul': 0, 'zero': 0,
+            'een': 1, 'één': 1, 'eén': 1, 'eentje': 1,
+            'twee': 2, 'drie': 3, 'vier': 4, 'vijf': 5,
+            'zes': 6, 'zeven': 7, 'acht': 8, 'negen': 9, 'tien': 10,
+            'elf': 11, 'twaalf': 12, 'dertien': 13, 'veertien': 14, 'vijftien': 15,
+            'zestien': 16, 'zeventien': 17, 'achttien': 18, 'negentien': 19, 'twintig': 20,
+            'eenentwintig': 21, 'tweeëntwintig': 22, 'vierentwintig': 24, 'vijfentwintig': 25, 'dertig': 30, 'veertig': 40
+        };
+
+        let order = {};
+
+        // ============================================================
+        // Fuzzy parser
+        // ============================================================
+        const snackAliasList = [];
+        Object.entries(snackAliases).forEach(([idx, aliases]) => {
+            aliases.forEach(alias => snackAliasList.push({ snackIdx: parseInt(idx), alias }));
+        });
+        snackAliasList.sort((a, b) => b.alias.length - a.alias.length);
+
+        function normalizeTranscript(text) {
+            return text.toLowerCase().replace(/[.,!?;:]/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+
+        function levenshtein(a, b) {
+            if (a === b) return 0;
+            if (!a.length) return b.length;
+            if (!b.length) return a.length;
+            const m = a.length, n = b.length;
+            let prev = new Array(n + 1), curr = new Array(n + 1);
+            for (let j = 0; j <= n; j++) prev[j] = j;
+            for (let i = 1; i <= m; i++) {
+                curr[0] = i;
+                const ca = a.charCodeAt(i - 1);
+                for (let j = 1; j <= n; j++) {
+                    const cost = ca === b.charCodeAt(j - 1) ? 0 : 1;
+                    curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
+                }
+                [prev, curr] = [curr, prev];
+            }
+            return prev[n];
+        }
+
+        function similarity(a, b) {
+            const aClean = a.replace(/\s+/g, ''), bClean = b.replace(/\s+/g, '');
+            const maxLen = Math.max(aClean.length, bClean.length);
+            if (maxLen === 0) return 1;
+            return 1 - levenshtein(aClean, bClean) / maxLen;
+        }
+
+        const FUZZY_THRESHOLD = 0.6;
+
+        function parseTranscriptFuzzy(transcript) {
+            const text = normalizeTranscript(transcript);
+            if (!text) return [];
+            const tokens = text.split(' ').filter(t => t.length > 0);
+            const matches = [];
+            for (let i = 0; i < tokens.length; i++) {
+                const tok = tokens[i];
+                let count;
+                if (/^\d+$/.test(tok)) count = parseInt(tok, 10);
+                else if (numberWords[tok] !== undefined) count = numberWords[tok];
+                else continue;
+
+                let best = { adjusted: -1, score: 0, snackIdx: -1, wordsUsed: 0 };
+                for (let n = 1; n <= 5 && i + n < tokens.length; n++) {
+                    const candidate = tokens.slice(i + 1, i + 1 + n).join(' ');
+                    if (!candidate) continue;
+                    for (const { snackIdx, alias } of snackAliasList) {
+                        const sim = similarity(candidate, alias);
+                        const adjusted = sim + n * 0.02;
+                        if (adjusted > best.adjusted) {
+                            best = { adjusted, score: sim, snackIdx, wordsUsed: n };
+                        }
+                    }
+                }
+                if (best.score >= FUZZY_THRESHOLD) {
+                    matches.push({ snackIdx: best.snackIdx, count, score: best.score });
+                    i += best.wordsUsed;
+                }
+            }
+            return matches;
+        }
+
+        function parseTranscript(transcripts) {
+            const list = Array.isArray(transcripts) ? transcripts : [transcripts || ''];
+            let bestMatches = [], bestRank = -Infinity, bestTranscript = list[0] || '';
+            for (const t of list) {
+                const m = parseTranscriptFuzzy(t || '');
+                const totalScore = m.reduce((s, x) => s + x.score, 0);
+                const rank = m.length * 10 + totalScore;
+                if (rank > bestRank) {
+                    bestRank = rank; bestMatches = m; bestTranscript = t || '';
+                }
+            }
+            const aggregated = {};
+            for (const m of bestMatches) {
+                aggregated[m.snackIdx] = (aggregated[m.snackIdx] || 0) + m.count;
+            }
+            return { results: aggregated, transcript: bestTranscript };
+        }
+
+        // ============================================================
+        // Audio visualizer (echte waveform via Web Audio API)
+        // ============================================================
+        const NUM_BARS = 24;
+        let audioContext = null, analyser = null, mediaStream = null, visAnimId = null;
+
+        function buildVisualizer() {
+            const vis = document.getElementById('visualizer');
+            vis.innerHTML = '';
+            for (let i = 0; i < NUM_BARS; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'vis-bar w-1.5 sm:w-2 bg-snackred rounded-full';
+                bar.style.height = '4px';
+                vis.appendChild(bar);
+            }
+        }
+
+        async function startVisualizer() {
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(mediaStream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 128;
+                analyser.smoothingTimeConstant = 0.7;
+                source.connect(analyser);
+                animateBars();
+            } catch (e) {
+                // Geen visualizer mogelijk; mic-icoon + REC dot blijven als feedback
+                console.log('Visualizer niet beschikbaar:', e);
+            }
+        }
+
+        function animateBars() {
+            if (!analyser) return;
+            const data = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(data);
+            const bars = document.querySelectorAll('#visualizer .vis-bar');
+            const minH = 4, maxH = 48;
+            bars.forEach((bar, i) => {
+                // Symmetrisch (links/rechts) rond midden, lage frequenties in het midden
+                const center = bars.length / 2;
+                const distFromCenter = Math.abs(i - center + 0.5);
+                const binIdx = Math.min(data.length - 1, Math.floor(distFromCenter * 1.6) + 1);
+                const v = data[binIdx] / 255;
+                const h = minH + Math.pow(v, 0.7) * (maxH - minH);
+                bar.style.height = h + 'px';
+            });
+            visAnimId = requestAnimationFrame(animateBars);
+        }
+
+        function stopVisualizer() {
+            if (visAnimId) cancelAnimationFrame(visAnimId);
+            visAnimId = null;
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(t => t.stop());
+                mediaStream = null;
+            }
+            if (audioContext) {
+                audioContext.close().catch(() => {});
+                audioContext = null;
+            }
+            analyser = null;
+            // Reset bars naar minimum
+            document.querySelectorAll('#visualizer .vis-bar').forEach(b => b.style.height = '4px');
+        }
+
+        // ============================================================
+        // Speech recognition
+        // ============================================================
+        let recognition = null;
+
+        function startRecording() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            openVoiceModal();
+            if (!SR) {
+                showVoiceError('Spraakherkenning werkt niet in deze browser. Gebruik Chrome of Edge op desktop, of Chrome/Safari op mobiel.');
+                return;
+            }
+            beginRecognition();
+        }
+
+        function openVoiceModal() {
+            buildVisualizer();
+            document.getElementById('voiceModal').classList.remove('hidden');
+        }
+
+        function closeVoiceModal() {
+            try { if (recognition) recognition.abort(); } catch (e) {}
+            recognition = null;
+            stopVisualizer();
+            document.getElementById('voiceModal').classList.add('hidden');
+        }
+
+        function beginRecognition() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) return;
+
+            document.getElementById('voiceStatus').classList.remove('hidden');
+            document.getElementById('voiceStatusText').textContent = 'Luistert mee...';
+            document.getElementById('voiceError').classList.add('hidden');
+            document.getElementById('voiceErrorActions').classList.add('hidden');
+            const stopBtn = document.getElementById('voiceStopBtn');
+            if (stopBtn) stopBtn.disabled = false;
+
+            try { if (recognition) recognition.abort(); } catch (e) {}
+            recognition = new SR();
+            recognition.lang = 'nl-NL';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 5;
+
+            const finalsByIndex = {};
+
+            recognition.onresult = (event) => {
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const r = event.results[i];
+                    if (r.isFinal) {
+                        const alts = [];
+                        for (let k = 0; k < r.length; k++) alts.push(r[k].transcript);
+                        finalsByIndex[i] = alts;
+                    }
+                }
+            };
+
+            recognition.onerror = (event) => {
+                let msg = 'Fout bij spraakherkenning: ' + event.error;
+                if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                    msg = 'Microfoon-toegang geweigerd. Sta toegang toe in de browserinstellingen.';
+                } else if (event.error === 'no-speech') {
+                    msg = 'Geen spraak gehoord. Probeer opnieuw.';
+                } else if (event.error === 'audio-capture') {
+                    msg = 'Geen microfoon gevonden.';
+                }
+                showVoiceError(msg);
+            };
+
+            recognition.onend = () => {
+                const indices = Object.keys(finalsByIndex).sort((a, b) => parseInt(a) - parseInt(b));
+                const primaryTexts = indices.map(i => (finalsByIndex[i][0] || '').trim());
+                const validMask = primaryTexts.map((t, i) => {
+                    if (!t) return false;
+                    for (let j = i + 1; j < primaryTexts.length; j++) {
+                        const t2 = primaryTexts[j];
+                        if (t2.startsWith(t) && t2.length > t.length) return false;
+                    }
+                    return true;
+                });
+                const validIndices = indices.filter((_, i) => validMask[i]);
+
+                let maxAlts = 1;
+                for (const i of validIndices) maxAlts = Math.max(maxAlts, finalsByIndex[i].length);
+                const altTranscripts = [];
+                for (let k = 0; k < maxAlts; k++) {
+                    const parts = validIndices.map(i => {
+                        const alts = finalsByIndex[i];
+                        return alts[k] !== undefined ? alts[k] : alts[0];
+                    });
+                    altTranscripts.push(parts.join(' ').trim());
+                }
+                if (!document.getElementById('voiceError').classList.contains('hidden')) return;
+                processTranscript(altTranscripts);
+            };
+
+            try {
+                recognition.start();
+                // Start de visualizer parallel (vraagt eigen mic-stream voor analyser)
+                startVisualizer();
+            } catch (e) {
+                showVoiceError('Kon spraakherkenning niet starten: ' + e.message);
+            }
+        }
+
+        function stopRecording() {
+            if (!recognition) return;
+            const statusText = document.getElementById('voiceStatusText');
+            if (statusText) statusText.textContent = 'Verwerken...';
+            const stopBtn = document.getElementById('voiceStopBtn');
+            if (stopBtn) stopBtn.disabled = true;
+            try { recognition.stop(); } catch (e) {}
+        }
+
+        function showVoiceError(msg) {
+            document.getElementById('voiceStatus').classList.add('hidden');
+            const errEl = document.getElementById('voiceError');
+            errEl.textContent = msg;
+            errEl.classList.remove('hidden');
+            document.getElementById('voiceErrorActions').classList.remove('hidden');
+            stopVisualizer();
+        }
+
+        function processTranscript(transcripts) {
+            const { results, transcript } = parseTranscript(transcripts);
+            closeVoiceModal();
+            order = { ...results };
+            showOrderScreen(transcript, Object.keys(results).length === 0);
+        }
+
+        // ============================================================
+        // UI: schermen & bestelling
+        // ============================================================
+        function showScreen(id) {
+            ['screen-home', 'screen-order', 'screen-done'].forEach(s => {
+                document.getElementById(s).classList.toggle('hidden', s !== id);
+            });
+        }
+
+        function showOrderScreen(transcript, noMatch) {
+            const tBox = document.getElementById('transcriptBox');
+            if (transcript) {
+                tBox.innerHTML = '<i class="fa-solid fa-quote-left text-snackred/40 mr-1"></i>' + transcript;
+                tBox.classList.remove('hidden');
+            } else {
+                tBox.classList.add('hidden');
+            }
+            const nmBox = document.getElementById('noMatchBox');
+            if (noMatch) {
+                nmBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Geen snacks herkend. Voeg ze hieronder handmatig toe of spreek opnieuw in.';
+                nmBox.classList.remove('hidden');
+            } else {
+                nmBox.classList.add('hidden');
+            }
+            renderOrder();
+            showScreen('screen-order');
+        }
+
+        function renderOrder() {
+            const list = document.getElementById('orderList');
+            const empty = document.getElementById('emptyOrder');
+            const okBtn = document.getElementById('okBtn');
+            const totalEl = document.getElementById('orderTotal');
+            const totalAmountEl = document.getElementById('orderTotalAmount');
+            list.innerHTML = '';
+
+            const entries = Object.entries(order)
+                .filter(([_, c]) => c > 0)
+                .sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+
+            okBtn.disabled = entries.length === 0;
+
+            if (entries.length === 0) {
+                empty.classList.remove('hidden');
+                list.classList.add('hidden');
+                totalEl.classList.add('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+            list.classList.remove('hidden');
+            totalEl.classList.remove('hidden');
+
+            let grandTotal = 0;
+            entries.forEach(([snackIdx, count]) => {
+                const unit = prices[snackIdx];
+                const subtotal = unit * count;
+                grandTotal += subtotal;
+
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between gap-2 py-3';
+                li.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-gray-900 truncate">${snacks[snackIdx]}</div>
+                        <div class="text-[11px] text-gray-500 tabular-nums">${fmtEur(unit)} per stuk</div>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button data-action="dec" data-idx="${snackIdx}" aria-label="Minder"
+                            class="w-9 h-9 rounded-full bg-snackcream border-2 border-snackred/30 hover:bg-snackyellow-light hover:border-snackred active:scale-95 text-snackred-dark font-bold text-xl leading-none flex items-center justify-center transition-all">−</button>
+                        <span class="font-display text-snackred-dark min-w-[2ch] text-center text-xl tabular-nums">${count}</span>
+                        <button data-action="inc" data-idx="${snackIdx}" aria-label="Meer"
+                            class="w-9 h-9 rounded-full bg-snackcream border-2 border-snackred/30 hover:bg-snackyellow-light hover:border-snackred active:scale-95 text-snackred-dark font-bold text-xl leading-none flex items-center justify-center transition-all">+</button>
+                    </div>
+                    <div class="flex flex-col items-end gap-1 min-w-[64px]">
+                        <span class="font-display text-snackred-dark text-sm tabular-nums">${fmtEur(subtotal)}</span>
+                        <button data-action="del" data-idx="${snackIdx}" aria-label="Verwijderen"
+                            class="w-7 h-7 rounded-full bg-red-50 hover:bg-red-100 active:scale-95 text-red-600 flex items-center justify-center transition-all">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+
+            totalAmountEl.textContent = fmtEur(grandTotal);
+        }
+
+        function populateAddSelect() {
+            const sel = document.getElementById('addSnackSelect');
+            sel.innerHTML = '';
+            snacks
+                .map((name, idx) => ({ name, idx }))
+                .sort((a, b) => a.name.localeCompare(b.name, 'nl'))
+                .forEach(({ name, idx }) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.textContent = `${name} — ${fmtEur(prices[idx])}`;
+                    sel.appendChild(opt);
+                });
+        }
+
+        // ============================================================
+        // Event listeners
+        // ============================================================
+        document.getElementById('recordBtn').addEventListener('click', startRecording);
+        document.getElementById('reRecordBtn').addEventListener('click', startRecording);
+
+        document.getElementById('addItemBtn').addEventListener('click', () => {
+            const idx = parseInt(document.getElementById('addSnackSelect').value);
+            const count = Math.max(1, parseInt(document.getElementById('addCountInput').value) || 1);
+            order[idx] = (order[idx] || 0) + count;
+            renderOrder();
+            document.getElementById('addCountInput').value = 1;
+        });
+
+        document.getElementById('orderList').addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-action]');
+            if (!btn) return;
+            const idx = btn.dataset.idx;
+            const action = btn.dataset.action;
+            if (action === 'inc') order[idx] = (order[idx] || 0) + 1;
+            else if (action === 'dec') {
+                order[idx] = Math.max(0, (order[idx] || 0) - 1);
+                if (order[idx] === 0) delete order[idx];
+            } else if (action === 'del') {
+                delete order[idx];
+            }
+            renderOrder();
+        });
+
+        document.getElementById('okBtn').addEventListener('click', () => {
+            const list = document.getElementById('doneList');
+            list.innerHTML = '';
+            let grandTotal = 0;
+            Object.entries(order)
+                .filter(([_, c]) => c > 0)
+                .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+                .forEach(([idx, count]) => {
+                    const subtotal = prices[idx] * count;
+                    grandTotal += subtotal;
+                    const li = document.createElement('li');
+                    li.className = 'flex justify-between items-baseline py-1.5 text-gray-800 gap-4';
+                    li.innerHTML = `
+                        <span class="font-medium">
+                            <span class="font-display text-snackred-dark tabular-nums mr-1">${count}&times;</span>${snacks[idx]}
+                        </span>
+                        <span class="font-display text-snackred-dark tabular-nums">${fmtEur(subtotal)}</span>
+                    `;
+                    list.appendChild(li);
+                });
+            document.getElementById('doneTotalAmount').textContent = fmtEur(grandTotal);
+            showScreen('screen-done');
+        });
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            order = {};
+            showScreen('screen-home');
+        });
+
+        populateAddSelect();
+    </script>
+</body>
+</html>
