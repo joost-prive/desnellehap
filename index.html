@@ -390,7 +390,8 @@
             'Frikandel', 'Frikandel speciaal',
             'Kroket', 'Bamischijf', 'Bitterballen',
             'Kaassoufflé', 'Berenklauw', 'Loempia',
-            'Mexicano', 'Kipcorn', 'Kipnuggets', 'Hamburger'
+            'Mexicano', 'Kipcorn', 'Kipnuggets', 'Hamburger',
+            'Friet klein', 'Gezinszak'
         ];
 
         const prices = [
@@ -399,7 +400,8 @@
             2.30, 2.60, 5.50,
             2.40, 4.00, 3.50,
             2.50, 2.60, 4.50,
-            3.80
+            3.80,
+            2.80, 14.00
         ];
 
         const fmtEur = (n) => '€ ' + n.toFixed(2).replace('.', ',');
@@ -419,7 +421,9 @@
             11: ['mexicano', 'mexicaan', 'mexicaantje'],
             12: ['kipcorn', 'kipkorn', 'kip corn'],
             13: ['kipnuggets', 'kip nuggets', 'nuggets'],
-            14: ['hamburger', 'burger']
+            14: ['hamburger', 'burger'],
+            15: ['friet klein', 'kleine friet', 'klein frietje', 'kleine patat', 'kleine patatje', 'patatje klein'],
+            16: ['gezinszak', 'familiepak', 'friet gezinszak', 'patat gezinszak']
         };
 
         const numberWords = {
@@ -445,6 +449,20 @@
 
         function normalizeTranscript(text) {
             return text.toLowerCase().replace(/[.,!?;:]/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+
+        // Zet "friet voor drie personen" en "voor drie personen friet" om naar "drie friet"
+        const CONJUNCTIONS = new Set(['en', 'ook', 'nog', 'dan', 'maar', 'of', 'met', 'plus']);
+        function preprocessPersonen(text) {
+            // "[product] voor [getal] personen" → "[getal] [product]"
+            text = text.replace(/\b(\w+)\s+voor\s+(\w+)\s+personen?\b/g, (match, word, num) => {
+                return CONJUNCTIONS.has(word) ? word + ' ' + num : num + ' ' + word;
+            });
+            // "voor [getal] personen [product]" → "[getal] [product]"
+            text = text.replace(/\bvoor\s+(\w+)\s+personen?\s+(\w+)/g, '$1 $2');
+            // overig "voor [getal] personen" → "[getal]"
+            text = text.replace(/\bvoor\s+(\w+)\s+personen?\b/g, '$1');
+            return text;
         }
 
         function levenshtein(a, b) {
@@ -476,7 +494,7 @@
         const FUZZY_THRESHOLD = 0.6;
 
         function parseTranscriptFuzzy(transcript) {
-            const text = normalizeTranscript(transcript);
+            const text = preprocessPersonen(normalizeTranscript(transcript));
             if (!text) return [];
             const tokens = text.split(' ').filter(t => t.length > 0);
             const matches = [];
