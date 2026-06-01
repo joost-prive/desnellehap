@@ -708,11 +708,20 @@
             recognition.onend = () => {
                 const indices = Object.keys(finalsByIndex).sort((a, b) => parseInt(a) - parseInt(b));
                 const primaryTexts = indices.map(i => (finalsByIndex[i][0] || '').trim());
-                const validMask = primaryTexts.map((t, i) => {
-                    if (!t) return false;
-                    for (let j = i + 1; j < primaryTexts.length; j++) {
-                        const t2 = primaryTexts[j];
-                        if (t2.startsWith(t) && t2.length > t.length) return false;
+                // Sommige SR-engines (vooral Chrome mobiel) leveren cumulatieve
+                // final results: blok N bevat soms blok N-1 opnieuw, maar met
+                // andere hoofdletters of leestekens. Normaliseer dus voor de
+                // dedup en check op containment, niet alleen prefix.
+                const norm = s => s.toLowerCase().replace(/[.,!?;:]/g, ' ').replace(/\s+/g, ' ').trim();
+                const normTexts = primaryTexts.map(norm);
+                const validMask = normTexts.map((ni, i) => {
+                    if (!ni) return false;
+                    for (let j = 0; j < normTexts.length; j++) {
+                        if (i === j) continue;
+                        const nj = normTexts[j];
+                        if (!nj) continue;
+                        if (nj.length > ni.length && nj.includes(ni)) return false;
+                        if (nj.length === ni.length && nj === ni && j < i) return false;
                     }
                     return true;
                 });
