@@ -639,6 +639,8 @@
         // Speech recognition
         // ============================================================
         let recognition = null;
+        let userRequestedStop = false;        // true zodra gebruiker op Klaar/Sluiten klikt
+        let accumulatedFinals = [];           // alle final-segmenten verzameld over auto-restarts heen
 
         function startRecording() {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -656,6 +658,7 @@
         }
 
         function closeVoiceModal() {
+            userRequestedStop = true; // voorkomt auto-restart na de abort hieronder
             try { if (recognition) recognition.abort(); } catch (e) {}
             recognition = null;
             stopVisualizer();
@@ -673,14 +676,33 @@
             const stopBtn = document.getElementById('voiceStopBtn');
             if (stopBtn) stopBtn.disabled = false;
 
-            try { if (recognition) recognition.abort(); } catch (e) {}
+            userRequestedStop = false;
+            accumulatedFinals = [];
+            startSpeechSession();
+            startVisualizer();
+        }
+
+        // Eén SR-sessie. Browsers kappen 'continuous' sessies na ~5s stilte
+        // af; we starten dan een nieuwe sessie tenzij de gebruiker zelf op
+        // Klaar heeft gedrukt of er een echte fout was. Zo blijft de mic
+        // open zolang het modal openstaat.
+        function startSpeechSession() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) return;
+
+            // Oude handlers loskoppelen zodat hun onend ons niet stoort
+            if (recognition) {
+                recognition.onresult = null;
+                recognition.onerror = null;
+                recognition.onend = null;
+                try { recognition.abort(); } catch (e) {}
+            }
+
             recognition = new SR();
             recognition.lang = 'nl-NL';
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.maxAlternatives = 5;
-
-            const finalsByIndex = {};
 
             recognition.onresult = (event) => {
                 for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -688,69 +710,83 @@
                     if (r.isFinal) {
                         const alts = [];
                         for (let k = 0; k < r.length; k++) alts.push(r[k].transcript);
-                        finalsByIndex[i] = alts;
+                        accumulatedFinals.push(alts);
                     }
                 }
             };
 
             recognition.onerror = (event) => {
+                // Stille fouten: 'no-speech' (stilte-timeout) en 'aborted'
+                // (door ons zelf opgevraagd) horen bij de auto-restart-flow
+                // en mogen geen foutmelding aan de gebruiker tonen.
+                if (event.error === 'no-speech' || event.error === 'aborted') return;
+
                 let msg = 'Fout bij spraakherkenning: ' + event.error;
                 if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                     msg = 'Microfoon-toegang geweigerd. Sta toegang toe in de browserinstellingen.';
-                } else if (event.error === 'no-speech') {
-                    msg = 'Geen spraak gehoord. Probeer opnieuw.';
                 } else if (event.error === 'audio-capture') {
                     msg = 'Geen microfoon gevonden.';
+                } else if (event.error === 'network') {
+                    msg = 'Spraakdienst niet bereikbaar. Op Edge: zet "Online spraakherkenning" aan in Windows-instellingen, of probeer Chrome.';
                 }
+                userRequestedStop = true; // voorkom dat onend opnieuw probeert te starten
                 showVoiceError(msg);
             };
 
             recognition.onend = () => {
-                const indices = Object.keys(finalsByIndex).sort((a, b) => parseInt(a) - parseInt(b));
-                const primaryTexts = indices.map(i => (finalsByIndex[i][0] || '').trim());
-                // Sommige SR-engines (vooral Chrome mobiel) leveren cumulatieve
-                // final results: blok N bevat soms blok N-1 opnieuw, maar met
-                // andere hoofdletters of leestekens. Normaliseer dus voor de
-                // dedup en check op containment, niet alleen prefix.
-                const norm = s => s.toLowerCase().replace(/[.,!?;:]/g, ' ').replace(/\s+/g, ' ').trim();
-                const normTexts = primaryTexts.map(norm);
-                const validMask = normTexts.map((ni, i) => {
-                    if (!ni) return false;
-                    for (let j = 0; j < normTexts.length; j++) {
-                        if (i === j) continue;
-                        const nj = normTexts[j];
-                        if (!nj) continue;
-                        if (nj.length > ni.length && nj.includes(ni)) return false;
-                        if (nj.length === ni.length && nj === ni && j < i) return false;
-                    }
-                    return true;
-                });
-                const validIndices = indices.filter((_, i) => validMask[i]);
-
-                let maxAlts = 1;
-                for (const i of validIndices) maxAlts = Math.max(maxAlts, finalsByIndex[i].length);
-                const altTranscripts = [];
-                for (let k = 0; k < maxAlts; k++) {
-                    const parts = validIndices.map(i => {
-                        const alts = finalsByIndex[i];
-                        return alts[k] !== undefined ? alts[k] : alts[0];
-                    });
-                    altTranscripts.push(parts.join(' ').trim());
+                if (!userRequestedStop) {
+                    // Browser stopte uit zichzelf — luister door.
+                    setTimeout(() => {
+                        if (!userRequestedStop) startSpeechSession();
+                    }, 50);
+                    return;
                 }
-                if (!document.getElementById('voiceError').classList.contains('hidden')) return;
-                processTranscript(altTranscripts);
+                finalizeAndProcess();
             };
 
             try {
                 recognition.start();
-                startVisualizer();
             } catch (e) {
+                userRequestedStop = true;
                 showVoiceError('Kon spraakherkenning niet starten: ' + e.message);
             }
         }
 
+        function finalizeAndProcess() {
+            const primaryTexts = accumulatedFinals.map(alts => (alts[0] || '').trim());
+            // Sommige SR-engines (vooral Chrome mobiel) leveren cumulatieve
+            // final results: blok N bevat soms blok N-1 opnieuw, maar met
+            // andere hoofdletters of leestekens. Normaliseer dus voor de
+            // dedup en check op containment, niet alleen prefix.
+            const norm = s => s.toLowerCase().replace(/[.,!?;:]/g, ' ').replace(/\s+/g, ' ').trim();
+            const normTexts = primaryTexts.map(norm);
+            const validMask = normTexts.map((ni, i) => {
+                if (!ni) return false;
+                for (let j = 0; j < normTexts.length; j++) {
+                    if (i === j) continue;
+                    const nj = normTexts[j];
+                    if (!nj) continue;
+                    if (nj.length > ni.length && nj.includes(ni)) return false;
+                    if (nj.length === ni.length && nj === ni && j < i) return false;
+                }
+                return true;
+            });
+            const validSegments = accumulatedFinals.filter((_, i) => validMask[i]);
+
+            let maxAlts = 1;
+            for (const alts of validSegments) maxAlts = Math.max(maxAlts, alts.length);
+            const altTranscripts = [];
+            for (let k = 0; k < maxAlts; k++) {
+                const parts = validSegments.map(alts => alts[k] !== undefined ? alts[k] : alts[0]);
+                altTranscripts.push(parts.join(' ').trim());
+            }
+            if (!document.getElementById('voiceError').classList.contains('hidden')) return;
+            processTranscript(altTranscripts);
+        }
+
         function stopRecording() {
             if (!recognition) return;
+            userRequestedStop = true;
             const statusText = document.getElementById('voiceStatusText');
             if (statusText) statusText.textContent = 'Verwerken...';
             const stopBtn = document.getElementById('voiceStopBtn');
@@ -862,6 +898,16 @@
         function populateAddSelect() {
             const sel = document.getElementById('addSnackSelect');
             sel.innerHTML = '';
+
+            // Placeholder als eerste optie — disabled zodat 'ie niet per ongeluk
+            // selecteerbaar is, maar wel zichtbaar als startpositie.
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = 'Kies een snack…';
+            placeholder.disabled = true;
+            placeholder.selected = true;
+            sel.appendChild(placeholder);
+
             snacks
                 .map((name, idx) => ({ name, idx }))
                 .sort((a, b) => a.name.localeCompare(b.name, 'nl'))
@@ -880,7 +926,9 @@
         document.getElementById('reRecordBtn').addEventListener('click', startRecording);
 
         document.getElementById('addItemBtn').addEventListener('click', () => {
-            const idx = parseInt(document.getElementById('addSnackSelect').value);
+            const val = document.getElementById('addSnackSelect').value;
+            if (val === '') return; // placeholder geselecteerd — niets doen
+            const idx = parseInt(val);
             const count = Math.max(1, parseInt(document.getElementById('addCountInput').value) || 1);
             order[idx] = (order[idx] || 0) + count;
             renderOrder();
