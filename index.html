@@ -736,9 +736,13 @@
             recognition.onend = () => {
                 if (!userRequestedStop) {
                     // Browser stopte uit zichzelf — luister door.
+                    // setTimeout(0) i.p.v. een wachttijd: zo klein mogelijk
+                    // audio-gat tussen sessies, maar wel een microtask-grens
+                    // zodat de oude SR-instance schoon kan afsluiten voordat
+                    // we een nieuwe maken (anders InvalidStateError in Chrome).
                     setTimeout(() => {
                         if (!userRequestedStop) startSpeechSession();
-                    }, 50);
+                    }, 0);
                     return;
                 }
                 finalizeAndProcess();
